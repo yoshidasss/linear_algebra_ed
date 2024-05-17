@@ -34,7 +34,12 @@ class AxisApp:
         self.canvas.tag_bind("i_vector", "<ButtonPress-1>", self.start_drag)
         self.canvas.tag_bind("i_vector", "<B1-Motion>", self.drag)
         self.canvas.tag_bind("i_vector", "<ButtonRelease-1>", self.stop_drag)
+        self.canvas.tag_bind("j_vector", "<ButtonPress-1>", self.start_drag)
+        self.canvas.tag_bind("j_vector", "<B1-Motion>", self.drag)
+        self.canvas.tag_bind("j_vector", "<ButtonRelease-1>", self.stop_drag)
         self.drag_data = {"x": 0, "y": 0, "item": None}
+        self.j_text = self.canvas.create_text(0, 0, text="j", anchor=tk.NW)
+
 
     def draw_axes(self):
         # x軸を画面の下半分に描画
@@ -179,13 +184,25 @@ class AxisApp:
 
             # i+jベクトルの終点を更新
             x_j, y_j = self.canvas.coords(self.j_vector)[2], self.canvas.coords(self.j_vector)[3]
-            self.canvas.coords(self.i_j_vector, x1, y1, x1 + dx + self.basis_vector_length, y1 + dy - self.basis_vector_length)
-            self.canvas.coords(self.i_j_text, x1 + dx + self.basis_vector_length + 10, y1 + dy - self.basis_vector_length - 10)
+            self.canvas.coords(self.i_j_vector, x1, y1, x2 + dx, y_j + dy)
+            self.canvas.coords(self.i_j_text, x2 + dx + 10, y_j + dy - 10)
+            self.update_dotted_lines()
+
+        # ドラッグ対象がj_vectorの終点の場合
+        elif self.drag_data["item"] == self.j_vector:
+            x1, y1 = self.canvas.coords(self.j_vector)[:2]
+            x2, y2 = self.canvas.coords(self.j_vector)[2:]
+            self.canvas.coords(self.j_vector, x1, y1, x2 + dx, y2 + dy)
+            self.canvas.coords(self.j_text, x2 + dx + 10, y2 + dy - 10)
+
+            # i+jベクトルの終点を更新
+            x_i, y_i = self.canvas.coords(self.i_vector)[2], self.canvas.coords(self.i_vector)[3]
+            self.canvas.coords(self.i_j_vector, x1, y1, x_i + dx, y2 + dy)
+            self.canvas.coords(self.i_j_text, x_i + dx + 10, y2 + dy - 10)
             self.update_dotted_lines()
 
         self.drag_data["x"] = event.x
         self.drag_data["y"] = event.y
-
 
     def stop_drag(self, event):
         # ドラッグの終了
