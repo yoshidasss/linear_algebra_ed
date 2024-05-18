@@ -78,24 +78,30 @@ class AxisApp:
 
         # x軸の基底ベクトル（iベクトル）
         self.i_vector = self.canvas.create_line(self.window_width / 2, self.window_height / 4,
-                                                 self.window_width / 2 + self.basis_vector_length, self.window_height / 4,
-                                                 arrow=tk.LAST, fill='red', width=3, tags="i_vector")
+                                                self.window_width / 2 + self.basis_vector_length, self.window_height / 4,
+                                                arrow=tk.LAST, fill='red', width=3, tags="i_vector")
         self.i_text = self.canvas.create_text(self.window_width / 2 + self.basis_vector_length + 10, self.window_height / 4 - 10,
                                 text="i", fill='red', anchor=tk.NW)
 
+        # ベクトルiの終点にラベルを追加
+        self.canvas.create_text(self.window_width / 2 + self.basis_vector_length, self.window_height / 4, text="i", anchor=tk.W)
+
         # y軸の基底ベクトル（jベクトル）
         self.j_vector = self.canvas.create_line(self.window_width / 2, self.window_height / 4,
-                                                 self.window_width / 2, self.window_height / 4 - self.basis_vector_length,
-                                                 arrow=tk.LAST, fill='red', width=3, tags="j_vector")
-        self.canvas.create_text(self.window_width / 2 + 10, self.window_height / 4 - self.basis_vector_length - 10,
+                                                self.window_width / 2, self.window_height / 4 - self.basis_vector_length,
+                                                arrow=tk.LAST, fill='red', width=3, tags="j_vector")
+        self.j_text = self.canvas.create_text(self.window_width / 2 + 10, self.window_height / 4 - self.basis_vector_length - 10,
                                 text="j", fill='red', anchor=tk.NW)
+
+        # ベクトルjの終点にラベルを追加
+        self.canvas.create_text(self.window_width / 2, self.window_height / 4 - self.basis_vector_length, text="j", anchor=tk.W)
 
         # 基底ベクトルの和を示すベクトル（i + j）
         self.i_j_vector = self.canvas.create_line(self.window_width / 2, self.window_height / 4,
-                                                   self.window_width / 2 + self.basis_vector_length, self.window_height / 4 - self.basis_vector_length,
-                                                   arrow=tk.LAST, fill='green', width=3, tags="i_j_vector")
+                                                self.window_width / 2 + self.basis_vector_length, self.window_height / 4 - self.basis_vector_length,
+                                                arrow=tk.LAST, fill='green', width=3, tags="i_j_vector")
         self.i_j_text = self.canvas.create_text(self.window_width / 2 + self.basis_vector_length + 10, self.window_height / 4 - self.basis_vector_length - 10,
-                                                 text="i + j", fill='green', anchor=tk.NW)
+                                                text="i + j", fill='green', anchor=tk.NW)
 
     def draw_dotted_lines(self):
         # ベクトルiの終点からベクトルi+jの終点への点線を描画
@@ -222,10 +228,18 @@ class AxisApp:
             matrix.append(row)
         print("Submitted Matrix:", matrix)
 
+        # ベクトルの終点を移動させる
+        i_end_point = (matrix[0][0], matrix[1][0])  # y軸上側を正の方向とする
+        j_end_point = (matrix[0][1], matrix[1][1])  # y軸上側を正の方向とする
+        self.canvas.coords(self.i_vector, self.window_width / 2, self.window_height / 4, self.window_width / 2 + i_end_point[0] * self.scale, self.window_height / 4 - i_end_point[1] * self.scale)  # ベクトルiの終点の座標を修正
+        self.canvas.coords(self.j_vector, self.window_width / 2, self.window_height / 4, self.window_width / 2 + j_end_point[0] * self.scale, self.window_height / 4 - j_end_point[1] * self.scale)  # ベクトルjの終点の座標を修正
+
+        # ベクトルi+jの終点を計算して移動させる
+        i_j_end_point = (i_end_point[0] + j_end_point[0], i_end_point[1] + j_end_point[1])
+        self.canvas.coords(self.i_j_vector, self.window_width / 2, self.window_height / 4, self.window_width / 2 + i_j_end_point[0] * self.scale, self.window_height / 4 - i_j_end_point[1] * self.scale)  # ベクトルi+jの終点の座標を修正
+        self.update_dotted_lines()
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = AxisApp(root)
     root.mainloop()
-
-
-
