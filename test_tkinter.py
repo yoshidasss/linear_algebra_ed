@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import math
 
 class AxisApp:
     def __init__(self, root):
@@ -40,7 +41,6 @@ class AxisApp:
         self.drag_data = {"x": 0, "y": 0, "item": None}
         self.j_text = self.canvas.create_text(0, 0, text="j", anchor=tk.NW)
 
-
     def draw_axes(self):
         # x軸を画面の下半分に描画
         self.canvas.create_line(0, self.window_height / 4, self.window_width, self.window_height / 4, arrow=tk.LAST)
@@ -76,9 +76,6 @@ class AxisApp:
         # 基底ベクトルを描画（太線で赤色）
         self.basis_vector_length = self.scale  # 基底ベクトルの長さをスケールに基づいて設定
 
-        # 基底ベクトルを描画（太線で赤色）
-        self.basis_vector_length = self.scale  # 基底ベクトルの長さをスケールに基づいて設定
-
         # x軸の基底ベクトル（iベクトル）
         self.i_vector = self.canvas.create_line(self.window_width / 2, self.window_height / 4,
                                                  self.window_width / 2 + self.basis_vector_length, self.window_height / 4,
@@ -104,12 +101,16 @@ class AxisApp:
         # ベクトルiの終点からベクトルi+jの終点への点線を描画
         x1, y1 = self.canvas.coords(self.i_vector)[2], self.canvas.coords(self.i_vector)[3]
         x2, y2 = self.canvas.coords(self.i_j_vector)[2], self.canvas.coords(self.i_j_vector)[3]
-        self.i_dotted_line = self.canvas.create_line(x1, y1, x2, y2, fill='blue', dash=(3, 3))
+        self.i_dotted_line = self.canvas.create_line(x1, y1, x2, y2, fill='blue', dash=(3, 3), tags="i_dotted_line")
 
         # ベクトルjの終点からベクトルi+jの終点への点線を描画
         x1, y1 = self.canvas.coords(self.j_vector)[2], self.canvas.coords(self.j_vector)[3]
         x2, y2 = self.canvas.coords(self.i_j_vector)[2], self.canvas.coords(self.i_j_vector)[3]
-        self.j_dotted_line = self.canvas.create_line(x1, y1, x2, y2, fill='blue', dash=(3, 3))
+        self.j_dotted_line = self.canvas.create_line(x1, y1, x2, y2, fill='blue', dash=(3, 3), tags="j_dotted_line")
+
+        # 紫の点線を描画
+        self.draw_purple_dotted_lines()
+
 
     def update_dotted_lines(self):
         # ベクトルiの終点からベクトルi+jの終点への点線を更新
@@ -122,16 +123,15 @@ class AxisApp:
         x2, y2 = self.canvas.coords(self.i_j_vector)[2], self.canvas.coords(self.i_j_vector)[3]
         self.canvas.coords(self.j_dotted_line, x1, y1, x2, y2)
 
+        # 紫の点線を更新
+        self.draw_purple_dotted_lines
+
     def create_matrix_input_form(self):
-        # マトリクス入力フォームのフレーム
+        # マトリクスの入力フォームを作成
         self.matrix_frame = ttk.Frame(self.root)
         self.matrix_frame.pack(side=tk.TOP, pady=10)
 
-        # マトリクス入力フォームのラベル
-        matrix_label = ttk.Label(self.matrix_frame, text="Enter Matrix:")
-        matrix_label.grid(row=0, column=0, columnspan=3)
-
-        # マトリクス入力フォームのエントリー
+        # 入力フィールドを作成
         self.matrix_entries = []
         for i in range(2):
             row_entries = []
@@ -155,15 +155,19 @@ class AxisApp:
             x = self.window_width / 2 - i * self.scale
             self.canvas.create_line(x, 0, x, self.window_height / 2, dash=(1, 2), fill='gray')
 
-        for i in range(1, int(self.window_height / (4 * self.scale))):
-            # 第一象限
-            y = self.window_height / 4 - i * self.scale
-            self.canvas.create_line(0, y, self.window_width, y, dash=(1, 2), fill='gray')
-            # 第四象限
-            y = self.window_height / 4 + i * self.scale
-            self.canvas.create_line(0, y, self.window_width, y, dash=(1, 2), fill='gray')
+        self.draw_purple_dotted_lines()
 
-    
+    def draw_purple_dotted_lines(self):
+        # 既存の紫の点線を削除
+        for item in self.canvas.find_withtag("purple_dotted_line"):
+            self.canvas.delete(item)
+
+        # 紫の点線をx軸と平行に描画
+        num_lines = int(self.window_height / (2 * self.scale))  # 描画する紫の点線の数
+        for i in range(-num_lines, num_lines + 1):
+            y = self.window_height / 4 + i * self.scale
+            self.canvas.create_line(0, y, self.window_width, y, fill='purple', dash=(3, 3), tags="purple_dotted_line")
+
     def start_drag(self, event):
         # ドラッグの開始
         self.drag_data["item"] = self.canvas.find_closest(event.x, event.y)[0]
@@ -184,8 +188,8 @@ class AxisApp:
 
             # i+jベクトルの終点を更新
             x_j, y_j = self.canvas.coords(self.j_vector)[2], self.canvas.coords(self.j_vector)[3]
-            self.canvas.coords(self.i_j_vector, x1, y1, x2 + dx, y_j + dy)
-            self.canvas.coords(self.i_j_text, x2 + dx + 10, y_j + dy - 10)
+            self.canvas.coords(self.i_j_vector, x1, y1, x2 + dx + (x_j - self.window_width / 2), y2 + dy + (y_j - self.window_height / 4))
+            self.canvas.coords(self.i_j_text, x2 + dx + 10 + (x_j - self.window_width / 2), y2 + dy - 10 + (y_j - self.window_height / 4))
             self.update_dotted_lines()
 
         # ドラッグ対象がj_vectorの終点の場合
@@ -197,8 +201,8 @@ class AxisApp:
 
             # i+jベクトルの終点を更新
             x_i, y_i = self.canvas.coords(self.i_vector)[2], self.canvas.coords(self.i_vector)[3]
-            self.canvas.coords(self.i_j_vector, x1, y1, x_i + dx, y2 + dy)
-            self.canvas.coords(self.i_j_text, x_i + dx + 10, y2 + dy - 10)
+            self.canvas.coords(self.i_j_vector, x1, y1, x_i + dx + (x2 - self.window_width / 2), y_i + dy + (y2 - self.window_height / 4))
+            self.canvas.coords(self.i_j_text, x_i + dx + 10 + (x2 - self.window_width / 2), y_i - 10 + (y2 - self.window_height / 4))
             self.update_dotted_lines()
 
         self.drag_data["x"] = event.x
@@ -222,5 +226,6 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = AxisApp(root)
     root.mainloop()
+
 
 
