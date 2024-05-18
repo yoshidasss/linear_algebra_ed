@@ -39,7 +39,6 @@ class AxisApp:
         self.canvas.tag_bind("j_vector", "<B1-Motion>", self.drag)
         self.canvas.tag_bind("j_vector", "<ButtonRelease-1>", self.stop_drag)
         self.drag_data = {"x": 0, "y": 0, "item": None}
-        self.j_text = self.canvas.create_text(0, 0, text="j", anchor=tk.NW)
 
     def draw_axes(self):
         # x軸を画面の下半分に描画
@@ -244,6 +243,12 @@ class AxisApp:
         j_end_point = (matrix[0][1], matrix[1][1])  # y軸上側を正の方向とする
         self.canvas.coords(self.i_vector, self.window_width / 2, self.window_height / 4, self.window_width / 2 + i_end_point[0] * self.scale, self.window_height / 4 - i_end_point[1] * self.scale)  # ベクトルiの終点の座標を修正
         self.canvas.coords(self.j_vector, self.window_width / 2, self.window_height / 4, self.window_width / 2 + j_end_point[0] * self.scale, self.window_height / 4 - j_end_point[1] * self.scale)  # ベクトルjの終点の座標を修正
+
+        # ベクトルiの終点にラベルを移動
+        self.canvas.coords(self.i_text, self.window_width / 2 + i_end_point[0] * self.scale, self.window_height / 4 - i_end_point[1] * self.scale)
+
+        # ベクトルjの終点にラベルを移動
+        self.canvas.coords(self.j_text, self.window_width / 2 + j_end_point[0] * self.scale, self.window_height / 4 - j_end_point[1] * self.scale)
 
         # ベクトルi+jの終点を計算して移動させる
         i_j_end_point = (i_end_point[0] + j_end_point[0], i_end_point[1] + j_end_point[1])
