@@ -114,9 +114,6 @@ class AxisApp:
         x2, y2 = self.canvas.coords(self.i_j_vector)[2], self.canvas.coords(self.i_j_vector)[3]
         self.j_dotted_line = self.canvas.create_line(x1, y1, x2, y2, fill='blue', dash=(3, 3), tags="j_dotted_line")
 
-        # 紫の点線を描画
-        self.draw_purple_dotted_lines()
-
 
     def update_dotted_lines(self):
         # ベクトルiの終点からベクトルi+jの終点への点線を更新
@@ -129,8 +126,7 @@ class AxisApp:
         x2, y2 = self.canvas.coords(self.i_j_vector)[2], self.canvas.coords(self.i_j_vector)[3]
         self.canvas.coords(self.j_dotted_line, x1, y1, x2, y2)
 
-        # 紫の点線を更新
-        self.draw_purple_dotted_lines
+
 
     def create_matrix_input_form(self):
         # マトリクスの入力フォームを作成
@@ -152,27 +148,42 @@ class AxisApp:
         self.submit_button.grid(row=3, column=0, columnspan=2, pady=10)
 
     def draw_grid(self):
-        # グリッドを描画
+        # 第一象限と第三象限に対するグリッドを描画
         for i in range(1, int(self.window_width / (2 * self.scale))):
             # 第一象限
             x = self.window_width / 2 + i * self.scale
             self.canvas.create_line(x, 0, x, self.window_height / 2, dash=(1, 2), fill='gray')
+            # 第三象限
+            x = self.window_width / 2 - i * self.scale
+            self.canvas.create_line(x, self.window_height / 2, x, self.window_height, dash=(1, 2), fill='gray')
+
+        for i in range(1, int(self.window_height / (2 * self.scale))):
+            # 第一象限
+            y = self.window_height / 4 - i * self.scale
+            self.canvas.create_line(self.window_width / 2, y, self.window_width, y, dash=(1, 2), fill='gray')
+            # 第三象限
+            y = self.window_height / 4 + i * self.scale
+            self.canvas.create_line(self.window_width / 2, y, self.window_width, y, dash=(1, 2), fill='gray')
+
+        # 第二象限と第四象限に対するグリッドを描画
+        for i in range(1, int(self.window_width / (2 * self.scale))):
             # 第二象限
             x = self.window_width / 2 - i * self.scale
             self.canvas.create_line(x, 0, x, self.window_height / 2, dash=(1, 2), fill='gray')
+            # 第四象限
+            x = self.window_width / 2 + i * self.scale
+            self.canvas.create_line(x, self.window_height / 2, x, self.window_height, dash=(1, 2), fill='gray')
 
-        self.draw_purple_dotted_lines()
+        for i in range(1, int(self.window_height / (2 * self.scale))):
+            # 第二象限
+            y = self.window_height / 4 - i * self.scale
+            self.canvas.create_line(0, y, self.window_width / 2, y, dash=(1, 2), fill='gray')
+            # 第四象限
+            y = self.window_height / 4 + i * self.scale
+            self.canvas.create_line(0, y, self.window_width / 2, y, dash=(1, 2), fill='gray')
 
     def draw_purple_dotted_lines(self):
-        # 既存の紫の点線を削除
-        for item in self.canvas.find_withtag("purple_dotted_line"):
-            self.canvas.delete(item)
-
-        # 紫の点線をx軸と平行に描画
-        num_lines = int(self.window_height / (2 * self.scale))  # 描画する紫の点線の数
-        for i in range(-num_lines, num_lines + 1):
-            y = self.window_height / 4 + i * self.scale
-            self.canvas.create_line(0, y, self.window_width, y, fill='purple', dash=(3, 3), tags="purple_dotted_line")
+        pass
 
     def start_drag(self, event):
         # ドラッグの開始
