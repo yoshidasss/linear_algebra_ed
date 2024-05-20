@@ -115,6 +115,7 @@ class AxisApp:
         
         # ベクトルjに平行になる紫の点線を描画
         self.purple_dotted_lines = []
+        self.draw_purple_dotted_lines()
 
 
     def update_dotted_lines(self):
@@ -128,6 +129,9 @@ class AxisApp:
         x2, y2 = self.canvas.coords(self.i_j_vector)[2], self.canvas.coords(self.i_j_vector)[3]
         self.canvas.coords(self.j_dotted_line, x1, y1, x2, y2)
         
+        # ベクトルjに平行な紫の点線を更新
+        self.draw_purple_dotted_lines()
+
 
 
     def create_matrix_input_form(self):
@@ -185,7 +189,12 @@ class AxisApp:
             self.canvas.create_line(0, y, self.window_width / 2, y, dash=(1, 2), fill='gray')
 
     def draw_purple_dotted_lines(self):
-        pass
+        # 既存の紫の点線を削除
+        for line in self.purple_dotted_lines:
+            self.canvas.delete(line)
+        self.purple_dotted_lines.clear()
+
+        
 
     def start_drag(self, event):
         # ドラッグの開始
