@@ -129,56 +129,32 @@ class AxisApp:
         grid_range = 20
         origin_x = self.window_width / 2
         origin_y = self.window_height / 4
-        for i in range(-grid_range, grid_range + 1):
-            # 第一象限
-            start_x = origin_x + i * i_x
-            start_y = origin_y + i * i_y
-            end_x = start_x + grid_range * j_x
-            end_y = start_y + grid_range * j_y
-            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="gray", dash=(2, 2), tags="grid_line")
-            # 第二象限
-            start_x = origin_x - i * i_x
-            start_y = origin_y - i * i_y
-            end_x = start_x + grid_range * j_x
-            end_y = start_y + grid_range * j_y
-            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="gray", dash=(2, 2), tags="grid_line")
-            # 第三象限
-            start_x = origin_x + i * j_x
-            start_y = origin_y + i * j_y
-            end_x = start_x - grid_range * i_x
-            end_y = start_y + grid_range * i_y
-            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="gray", dash=(2, 2), tags="grid_line")
-            # 第四象限
-            start_x = origin_x - i * j_x
-            start_y = origin_y - i * j_y
-            end_x = start_x - grid_range * i_x
-            end_y = start_y + grid_range * i_y
-            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="gray", dash=(2, 2), tags="grid_line")
+
         for j in range(-grid_range, grid_range + 1):
-            # 第一象限
+            # 横向き(第1,4象限)
             start_x = origin_x + j * j_x
             start_y = origin_y + j * j_y
             end_x = start_x + grid_range * i_x
             end_y = start_y + grid_range * i_y
-            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="gray", dash=(2, 2), tags="grid_line")
-            # 第二象限
+            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="blue", dash=(2, 2), tags="grid_line")
+            # 横向き(第2,3象限)
             start_x = origin_x - j * j_x
             start_y = origin_y - j * j_y
-            end_x = start_x + grid_range * i_x
-            end_y = start_y + grid_range * i_y
-            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="gray", dash=(2, 2), tags="grid_line")
-            # 第三象限
+            end_x = start_x - grid_range * i_x
+            end_y = start_y - grid_range * i_y
+            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="blue", dash=(2, 2), tags="grid_line")
+            # 縦向き(第3,4象限)
             start_x = origin_x + j * i_x
             start_y = origin_y + j * i_y
             end_x = start_x - grid_range * j_x
             end_y = start_y - grid_range * j_y
-            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="gray", dash=(2, 2), tags="grid_line")
-            # 第四象限
+            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="blue", dash=(2, 2), tags="grid_line")
+            # 縦向き(第1,2象限)
             start_x = origin_x - j * i_x
             start_y = origin_y - j * i_y
             end_x = start_x + grid_range * j_x
             end_y = start_y + grid_range * j_y
-            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="gray", dash=(2, 2), tags="grid_line")
+            self.canvas.create_line(start_x, start_y, end_x, end_y, fill="blue", dash=(2, 2), tags="grid_line")
 
     # ドラッグ開始
     def start_drag(self, event):
