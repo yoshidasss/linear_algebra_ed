@@ -31,13 +31,13 @@ class AxisApp:
         self.draw_grid()
 
         # イベントバインディング
-        self.canvas.tag_bind("i_vector", "<ButtonPress-1>", self.start_drag)
+        """ self.canvas.tag_bind("i_vector", "<ButtonPress-1>", self.start_drag)
         self.canvas.tag_bind("i_vector", "<B1-Motion>", self.drag)
         self.canvas.tag_bind("i_vector", "<ButtonRelease-1>", self.stop_drag)
         self.canvas.tag_bind("j_vector", "<ButtonPress-1>", self.start_drag)
         self.canvas.tag_bind("j_vector", "<B1-Motion>", self.drag)
-        self.canvas.tag_bind("j_vector", "<ButtonRelease-1>", self.stop_drag)
-        self.drag_data = {"x": 0, "y": 0, "item": None}
+        self.canvas.tag_bind("j_vector", "<ButtonRelease-1>", self.stop_drag) """
+        #self.drag_data = {"x": 0, "y": 0, "item": None}
 
     # x軸とy軸の描画
     def draw_axes(self):
@@ -156,7 +156,7 @@ class AxisApp:
             end_y = start_y + grid_range * j_y
             self.canvas.create_line(start_x, start_y, end_x, end_y, fill="blue", dash=(2, 2), tags="grid_line")
 
-    # ドラッグ開始
+    """ # ドラッグ開始
     def start_drag(self, event):
         self.drag_data["item"] = self.canvas.find_closest(event.x, event.y)[0]
         self.drag_data["x"] = event.x
@@ -178,7 +178,7 @@ class AxisApp:
         self.drag_data["item"] = None
         self.drag_data["x"] = 0
         self.drag_data["y"] = 0
-
+ """
     def submit_matrix(self):
         try:
             a = float(self.matrix_entries[0][0].get())
