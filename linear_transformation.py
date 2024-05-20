@@ -11,7 +11,7 @@ class AxisApp:
         self.window_height = self.root.winfo_screenheight()
 
         # Canvasを作成
-        self.canvas = tk.Canvas(self.root, width=self.window_width, height=self.window_height / 2)
+        self.canvas = tk.Canvas(self.root, width=self.window_width, height=self.window_height/1.7)
         self.canvas.pack(side=tk.BOTTOM, fill=tk.X)
 
         # スケールの定義
@@ -29,6 +29,7 @@ class AxisApp:
         self.create_matrix_input_form()
         # グリッドを描画
         self.draw_grid()
+        self.draw_extra_grid()
 
         # イベントバインディング
         """ self.canvas.tag_bind("i_vector", "<ButtonPress-1>", self.start_drag)
@@ -44,6 +45,9 @@ class AxisApp:
         self.canvas.create_line(0, self.window_height / 4, self.window_width, self.window_height / 4, arrow=tk.LAST)
         self.canvas.create_line(self.window_width / 2, self.window_height / 2, self.window_width / 2, 0, arrow=tk.LAST)
         self.canvas.create_text(self.window_width / 2 + 10, self.window_height / 4 + 10, text="0", anchor=tk.NW)
+        # y軸の描画
+        self.canvas.create_line(self.window_width / 2, 0, self.window_width / 2, self.window_height, arrow=tk.LAST)
+        self.canvas.create_text(self.window_width / 2 + 10, self.window_height / 4 * 3 + 10, text="0", anchor=tk.NW)
 
     # 行列の目盛りの描画
     def draw_matrix(self):
@@ -155,6 +159,28 @@ class AxisApp:
             end_x = start_x + grid_range * j_x
             end_y = start_y + grid_range * j_y
             self.canvas.create_line(start_x, start_y, end_x, end_y, fill="blue", dash=(2, 2), tags="grid_line")
+    
+    # グリッドを描画する別のメソッド
+    ## 次にこのメソッドをグラフの最後尾に表示させる
+    def draw_extra_grid(self):
+        self.canvas.delete("extra_grid_line")
+        grid_spacing = 1  # グリッドの間隔を1とする
+        x_origin = self.window_width / 2
+        y_origin = self.window_height / 4
+
+        # より薄い色を設定
+        hex_gray = '#767676'
+
+        # x軸に平行なグリッドを描画
+        for i in range(int(-x_origin / self.scale), int(x_origin / self.scale) + 1):
+            x = x_origin + i * self.scale
+            self.canvas.create_line(x, 0, x, self.window_height, fill=hex_gray, dash=(3, 3), tags="extra_grid_line")
+
+        # y軸に平行なグリッドを描画
+        for j in range(int(-y_origin / self.scale), int(y_origin / self.scale) + 1):
+            y = y_origin + j * self.scale
+            self.canvas.create_line(0, y, self.window_width, y, fill=hex_gray, dash=(3, 3), tags="extra_grid_line")
+
 
     """ # ドラッグ開始
     def start_drag(self, event):
