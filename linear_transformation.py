@@ -28,17 +28,11 @@ class AxisApp:
         # 行列の入力フォームを作成
         self.create_matrix_input_form()
         # グリッドを描画
-        self.draw_grid()
         self.draw_extra_grid()
-
-        # イベントバインディング
-        """ self.canvas.tag_bind("i_vector", "<ButtonPress-1>", self.start_drag)
-        self.canvas.tag_bind("i_vector", "<B1-Motion>", self.drag)
-        self.canvas.tag_bind("i_vector", "<ButtonRelease-1>", self.stop_drag)
-        self.canvas.tag_bind("j_vector", "<ButtonPress-1>", self.start_drag)
-        self.canvas.tag_bind("j_vector", "<B1-Motion>", self.drag)
-        self.canvas.tag_bind("j_vector", "<ButtonRelease-1>", self.stop_drag) """
-        #self.drag_data = {"x": 0, "y": 0, "item": None}
+        self.draw_grid()
+        # グリッドの表示/非表示ボタンを作成
+        self.create_toggle_grid_button()
+        
 
     # x軸とy軸の描画
     def draw_axes(self):
@@ -60,15 +54,16 @@ class AxisApp:
                                     self.window_width / 2 - i * self.scale, self.window_height / 4 + 5)
             self.canvas.create_text(self.window_width / 2 - i * self.scale, self.window_height / 4 + 10,
                                     text=str(-i), anchor=tk.N)
-        for i in range(1, int(self.window_height / 4 / self.scale)):
+        for i in range(1, 5):  # 終了条件を変更
             self.canvas.create_line(self.window_width / 2 - 5, self.window_height / 4 - i * self.scale,
-                                    self.window_width / 2 + 5, self.window_height / 4 - i * self.scale)
+                            self.window_width / 2 + 5, self.window_height / 4 - i * self.scale)
             self.canvas.create_text(self.window_width / 2 + 10, self.window_height / 4 - i * self.scale,
-                                    text=str(i), anchor=tk.W)
+                            text=str(i), anchor=tk.W)
             self.canvas.create_line(self.window_width / 2 - 5, self.window_height / 4 + i * self.scale,
-                                    self.window_width / 2 + 5, self.window_height / 4 + i * self.scale)
+                            self.window_width / 2 + 5, self.window_height / 4 + i * self.scale)
             self.canvas.create_text(self.window_width / 2 + 10, self.window_height / 4 + i * self.scale,
-                                    text=str(-i), anchor=tk.W)
+                            text=str(-i), anchor=tk.W)
+
 
     # 基底ベクトルの描画
     def draw_basis_vectors(self):
@@ -112,16 +107,44 @@ class AxisApp:
     def create_matrix_input_form(self):
         self.matrix_frame = ttk.Frame(self.root)
         self.matrix_frame.pack(side=tk.TOP, pady=10)
+
+        # 左側の括弧の前に文字を表示するラベルを作成
+        self.left_bracket_text = ttk.Label(self.matrix_frame, text="行列:", font=("Helvetica", 30))
+        self.left_bracket_text.grid(row=1, column=0, sticky="e", padx=(0, 5), pady=(0, 10))
+
+        # 左側の括弧を作成
+        self.left_bracket = ttk.Label(self.matrix_frame, text="[", font=("Helvetica", 90))
+        self.left_bracket.grid(row=1, column=1, rowspan=2, sticky="nse", pady=(0, 10))  # パディングを調整
+
         self.matrix_entries = []
         for i in range(2):
             row_entries = []
             for j in range(2):
-                entry = ttk.Entry(self.matrix_frame, width=10)
-                entry.grid(row=i + 1, column=j, padx=5, pady=5)
+                entry = ttk.Entry(self.matrix_frame, width=5, justify="center", font=("Helvetica", 24))  # フォントサイズを変更
+                entry.grid(row=i + 1, column=j + 2, padx=5, pady=0)
                 row_entries.append(entry)
             self.matrix_entries.append(row_entries)
+
+        # 右側の括弧を作成
+        self.right_bracket = ttk.Label(self.matrix_frame, text="]", font=("Helvetica", 90))
+        self.right_bracket.grid(row=1, column=4, rowspan=2, sticky="nsw", pady=(0, 10))
+
         self.submit_button = ttk.Button(self.matrix_frame, text="Submit", command=self.submit_matrix)
-        self.submit_button.grid(row=3, column=0, columnspan=2, pady=10)
+        self.submit_button.grid(row=3, column=2, columnspan=2, pady=10)
+
+        # グリッドの表示/非表示ボタンを作成するメソッド
+    def create_toggle_grid_button(self):
+        self.toggle_button = ttk.Button(self.root, text="表示/非表示", command=self.toggle_extra_grid)
+        self.toggle_button.place(relx=1.0, rely=0.0, anchor='ne', x=-30, y=30)
+        self.extra_grid_visible = False
+
+    # グリッドの表示/非表示を切り替えるメソッド
+    def toggle_extra_grid(self):
+        if self.extra_grid_visible:
+            self.canvas.delete("extra_grid_line")
+        else:
+            self.draw_extra_grid()
+        self.extra_grid_visible = not self.extra_grid_visible
 
     # グリッドの描画
     def draw_grid(self):
@@ -161,7 +184,6 @@ class AxisApp:
             self.canvas.create_line(start_x, start_y, end_x, end_y, fill="blue", dash=(2, 2), tags="grid_line")
     
     # グリッドを描画する別のメソッド
-    ## 次にこのメソッドをグラフの最後尾に表示させる
     def draw_extra_grid(self):
         self.canvas.delete("extra_grid_line")
         grid_spacing = 1  # グリッドの間隔を1とする
@@ -182,29 +204,6 @@ class AxisApp:
             self.canvas.create_line(0, y, self.window_width, y, fill=hex_gray, dash=(3, 3), tags="extra_grid_line")
 
 
-    """ # ドラッグ開始
-    def start_drag(self, event):
-        self.drag_data["item"] = self.canvas.find_closest(event.x, event.y)[0]
-        self.drag_data["x"] = event.x
-        self.drag_data["y"] = event.y
-
-    # ドラッグ中
-    def drag(self, event):
-        delta_x = event.x - self.drag_data["x"]
-        delta_y = event.y - self.drag_data["y"]
-        self.canvas.move(self.drag_data["item"], delta_x, delta_y)
-        self.drag_data["x"] = event.x
-        self.drag_data["y"] = event.y
-        if self.drag_data["item"] in [self.i_vector, self.j_vector]:
-            self.update_dotted_lines()
-            self.draw_grid()
-
-    # ドラッグ終了
-    def stop_drag(self, event):
-        self.drag_data["item"] = None
-        self.drag_data["x"] = 0
-        self.drag_data["y"] = 0
- """
     def submit_matrix(self):
         try:
             a = float(self.matrix_entries[0][0].get())
