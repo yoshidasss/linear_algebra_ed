@@ -43,7 +43,7 @@ class AxisApp:
         self.canvas.create_line(self.window_width / 2, 0, self.window_width / 2, self.window_height, arrow=tk.LAST)
         self.canvas.create_text(self.window_width / 2 + 10, self.window_height / 4 * 3 + 10, text="0", anchor=tk.NW)
 
-    # 行列の目盛りの描画
+    # 目盛りの描画
     def draw_matrix(self):
         for i in range(1, int(self.window_width / 2 / self.scale)):
             self.canvas.create_line(self.window_width / 2 + i * self.scale, self.window_height / 4 - 5,
@@ -207,8 +207,8 @@ class AxisApp:
     def submit_matrix(self):
         try:
             a = float(self.matrix_entries[0][0].get())
-            b = float(self.matrix_entries[0][1].get())
-            c = float(self.matrix_entries[1][0].get())
+            b = float(self.matrix_entries[1][0].get())
+            c = float(self.matrix_entries[0][1].get())
             d = float(self.matrix_entries[1][1].get())
         except ValueError:
             return
@@ -218,18 +218,24 @@ class AxisApp:
         self.canvas.delete(self.j_text)
         self.canvas.delete(self.i_j_vector)
         self.canvas.delete(self.i_j_text)
+        
         i_vector_end_x = self.window_width / 2 + a * self.scale
         i_vector_end_y = self.window_height / 4 - b * self.scale
+        
         j_vector_end_x = self.window_width / 2 + c * self.scale
         j_vector_end_y = self.window_height / 4 - d * self.scale
+
         self.i_vector = self.canvas.create_line(self.window_width / 2, self.window_height / 4, i_vector_end_x,
                                                 i_vector_end_y, arrow=tk.LAST, fill='red', width=3, tags="i_vector")
         self.i_text = self.canvas.create_text(i_vector_end_x + 10, i_vector_end_y - 10, text="i", fill='red', anchor=tk.NW)
+        
         self.j_vector = self.canvas.create_line(self.window_width / 2, self.window_height / 4, j_vector_end_x,
                                                 j_vector_end_y, arrow=tk.LAST, fill='red', width=3, tags="j_vector")
         self.j_text = self.canvas.create_text(j_vector_end_x + 10, j_vector_end_y - 10, text="j", fill='red', anchor=tk.NW)
+        
         i_j_vector_end_x = i_vector_end_x + c * self.scale
         i_j_vector_end_y = i_vector_end_y - d * self.scale
+
         self.i_j_vector = self.canvas.create_line(self.window_width / 2, self.window_height / 4, i_j_vector_end_x,
                                                   i_j_vector_end_y, arrow=tk.LAST, fill='green', width=3, tags="i_j_vector")
         self.i_j_text = self.canvas.create_text(i_j_vector_end_x + 10, i_j_vector_end_y - 10, text="i + j",
